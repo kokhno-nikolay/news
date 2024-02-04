@@ -7,3 +7,9 @@ build: ## Build project
 
 mock: ## Generate mocks
   go generate ./...
+
+swag-format: ## Formatting swagger comments  
+  swag fmt - format swag comments
+
+swag: ## Generate swagger documentation
+  swag init -g ./cmd/service/main.go
