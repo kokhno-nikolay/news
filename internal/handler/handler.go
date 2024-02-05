@@ -4,6 +4,10 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+
+	_ "github.com/kokhno-nikolay/news/docs"
 	"github.com/kokhno-nikolay/news/internal/repository"
 )
 
@@ -18,12 +22,15 @@ func NewHandler(repo *repository.Repository) *Handler {
 func (h *Handler) InitRoutes() http.Handler {
 	router := gin.Default()
 
-	// News routes
-	router.GET("/news/:id", h.Get)
-	router.GET("/news/", h.List)
-	router.POST("/news", h.Create)
-	router.PUT("/news/:id", h.Update)
-	router.DELETE("/news/:id", h.Delete)
+	// Swagger documentation route
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	// Posts routes
+	router.GET("/posts/:id", h.Get)
+	router.GET("/posts/", h.List)
+	router.POST("/posts", h.Create)
+	router.PUT("/posts/:id", h.Update)
+	router.DELETE("/posts/:id", h.Delete)
 
 	return router
 }

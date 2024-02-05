@@ -1,6 +1,20 @@
 package main
 
-import "fmt"
+import (
+	"context"
+	"errors"
+	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+
+	"github.com/kokhno-nikolay/news/config"
+	"github.com/kokhno-nikolay/news/internal/handler"
+	"github.com/kokhno-nikolay/news/internal/repository"
+	"github.com/kokhno-nikolay/news/internal/repository/postgresql"
+	"github.com/kokhno-nikolay/news/internal/server"
+)
 
 //	@title			News service
 //	@version		1.0
@@ -9,5 +23,33 @@ import "fmt"
 // @host		localhost:8000
 // @BasePath	/
 func main() {
-	fmt.Println("Initialize empty golang project")
+	ctx := context.Background()
+	cfg := config.GetConfig()
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
+
+	dns := "user=postgres dbname=boosters sslmode=disable"
+	db, err := postgresql.NewClient(dns)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	repos := repository.NewRepository(db)
+	handlers := handler.NewHandler(repos)
+
+	srv := server.NewServer(cfg, handlers.InitRoutes())
+	go func() {
+		if err := srv.Run(); !errors.Is(err, http.ErrServerClosed) {
+			log.Printf("error occurred while running http server: %s\n", err.Error())
+		}
+	}()
+	log.Printf("Server started")
+
+	<-quit
+
+	if err := srv.Stop(ctx); err != nil {
+		log.Printf("failed to stop server: %v", err.Error())
+	}
+
 }

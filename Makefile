@@ -13,3 +13,9 @@ swag-format: ## Formatting swagger comments
 
 swag: ## Generate swagger documentation
   swag init -g ./cmd/service/main.go
+
+test: ## Runs all tests
+  go test -v ./...
+
+local-run: ## Runs docker-compose with postgres, migrations and service 
+  docker-compose -f ./deploy/local/docker-compose.yml up
