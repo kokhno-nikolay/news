@@ -26,7 +26,7 @@ func (r *PostRepo) Get(ctx context.Context, id int) (*domain.Post, error) {
 	query := `
 		SELECT id, title, content, created_at, updated_at 
 		FROM posts
-		WHERE id = ?
+		WHERE id = $1
 	`
 
 	row := r.db.QueryRow(query, &id)
@@ -91,10 +91,10 @@ func (r *PostRepo) List(ctx context.Context, limit *int) ([]*domain.Post, error)
 
 func (r *PostRepo) Create(ctx context.Context, input *domain.PostInput) (*domain.Post, error) {
 	query := `
-		INSERT INTO posts (title, content) 
-		VALUES (?, ?)
+        INSERT INTO posts (title, content) 
+        VALUES ($1, $2) 
 		RETURNING id, title, content, created_at
-	`
+    `
 
 	var post domain.Post
 	err := r.db.QueryRowContext(ctx, query, input.Title, input.Content).
@@ -109,8 +109,8 @@ func (r *PostRepo) Create(ctx context.Context, input *domain.PostInput) (*domain
 func (r *PostRepo) Update(ctx context.Context, id int, input *domain.PostInput) (*domain.Post, error) {
 	query := `
 		UPDATE posts
-		SET title = ?, content = ?
-		WHERE id = ?
+		SET title = $1, content = $2
+		WHERE id = $3
 		RETURNING id, title, content, created_at, updated_at
 	`
 
@@ -127,7 +127,7 @@ func (r *PostRepo) Update(ctx context.Context, id int, input *domain.PostInput) 
 func (r *PostRepo) Delete(ctx context.Context, id int) (bool, error) {
 	query := `
 		DELETE FROM posts 
-		WHERE id = ?
+		WHERE id = $1
 	`
 
 	result, err := r.db.ExecContext(ctx, query, id)

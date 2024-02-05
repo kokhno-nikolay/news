@@ -16,12 +16,18 @@ import (
 	"github.com/kokhno-nikolay/news/internal/server"
 )
 
-//	@title			News service
-//	@version		1.0
-//	@description	Test task for Promova
+const (
+	// только для твоего удобства (чтобы не парился с конфигом)
+	// в реальном проекте, конечно же так так не делаю :)
+	dns = "user=postgres password=postgres dbname=boosters sslmode=disable host=postgres"
+)
 
-// @host		localhost:8000
-// @BasePath	/
+//	@title          News service
+//	@version        1.0
+//	@description    Test task for Promova
+
+// @host            localhost:8000
+// @BasePath        /
 func main() {
 	ctx := context.Background()
 	cfg := config.GetConfig()
@@ -29,7 +35,6 @@ func main() {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
 
-	dns := "user=postgres dbname=boosters sslmode=disable"
 	db, err := postgresql.NewClient(dns)
 	if err != nil {
 		panic(err.Error())

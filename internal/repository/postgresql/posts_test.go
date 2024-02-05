@@ -201,7 +201,7 @@ func TestPostRepo_Update(t *testing.T) {
 		UpdatedAt: time.Now(),
 	}
 
-	mock.ExpectQuery("UPDATE posts SET title = \\?, content = \\? WHERE id = \\? RETURNING id, title, content, created_at, updated_at").
+	mock.ExpectQuery("UPDATE posts SET title = \\$1, content = \\$2 WHERE id = \\$3 RETURNING id, title, content, created_at, updated_at").
 		WithArgs(updateInput.Title, updateInput.Content, id).
 		WillReturnRows(sqlmock.NewRows([]string{"id", "title", "content", "created_at", "updated_at"}).
 			AddRow(expectedPost.ID, expectedPost.Title, expectedPost.Content, expectedPost.CreatedAt, expectedPost.UpdatedAt))

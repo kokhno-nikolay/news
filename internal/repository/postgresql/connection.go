@@ -6,7 +6,12 @@ import (
 )
 
 func NewClient(dns string) (*sqlx.DB, error) {
-	db, err := sqlx.Connect("postgres", dns)
+	db, err := sqlx.Open("postgres", dns)
+	if err != nil {
+		return nil, err
+	}
+
+	err = db.Ping()
 	if err != nil {
 		return nil, err
 	}

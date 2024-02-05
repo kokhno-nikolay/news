@@ -111,7 +111,7 @@ func (h *Handler) Update(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "parameter format")
+		newErrorResponse(c, http.StatusBadRequest, "invalid parameter format")
 		return
 	}
 
@@ -156,7 +156,7 @@ func (h *Handler) Delete(c *gin.Context) {
 	idParam := c.Param("id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
-		newErrorResponse(c, http.StatusBadRequest, "parameter format")
+		newErrorResponse(c, http.StatusBadRequest, "invalid parameter format")
 		return
 	}
 
