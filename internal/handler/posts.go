@@ -53,6 +53,8 @@ func (h *Handler) Get(c *gin.Context) {
 // @Failure		default  {object}   errorResponse
 // @Router		/posts [get]
 func (h *Handler) List(c *gin.Context) {
+	// ось тут все залежить від бізнес-завдання, звичайно ж у реальному проекті швидше за все використовувалася б пагінація
+
 	posts, err := h.repo.List(c, nil)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
@@ -174,6 +176,8 @@ func (h *Handler) Delete(c *gin.Context) {
 	c.JSON(http.StatusOK, ok)
 }
 
+// ось тут також все залежить від бізнес завдання, просто додав пару кейсів для тестів
+// реальну валідацію обговорював би з продуктами
 func validatePostInput(input *domain.PostInput) error {
 	if len(input.Title) < 3 {
 		return fmt.Errorf("title must be at least 3 characters long")

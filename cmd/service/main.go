@@ -17,14 +17,14 @@ import (
 )
 
 const (
-	// только для твоего удобства (чтобы не парился с конфигом)
-	// в реальном проекте, конечно же так так не делаю :)
+	// тільки для зручності (щоб не парився з конфігом)
+	// у реальному проекті, звичайно ж так не роблю :)
 	dns = "user=postgres password=postgres dbname=boosters sslmode=disable host=postgres"
 )
 
-//	@title          News service
-//	@version        1.0
-//	@description    Test task for Promova
+//  @title          News service
+//  @version        1.0
+//  @description    Test task for Promova
 
 // @host            localhost:8000
 // @BasePath        /
