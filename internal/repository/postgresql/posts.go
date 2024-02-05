@@ -3,11 +3,11 @@ package postgresql
 import (
 	"context"
 	"database/sql"
-	"errors"
 
 	"github.com/jmoiron/sqlx"
 
 	"github.com/kokhno-nikolay/news/domain"
+	"github.com/kokhno-nikolay/news/pkg/errors"
 )
 
 const defaultLimit = 200
@@ -41,7 +41,7 @@ func (r *PostRepo) Get(ctx context.Context, id int) (*domain.Post, error) {
 	)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, errors.New(sql.ErrNoRows.Error())
+			return nil, errors.ErrNotFound
 		}
 
 		return nil, err

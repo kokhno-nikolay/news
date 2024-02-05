@@ -6,7 +6,9 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+
 	"github.com/kokhno-nikolay/news/domain"
+	"github.com/kokhno-nikolay/news/pkg/errors"
 )
 
 // @Summary		Get post
@@ -35,6 +37,11 @@ func (h *Handler) Get(c *gin.Context) {
 
 	post, err := h.repo.Get(c, id)
 	if err != nil {
+		if err == errors.ErrNotFound {
+			newErrorResponse(c, http.StatusNotFound, errors.ErrNotFound.Error())
+			return
+		}
+
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
