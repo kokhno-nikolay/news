@@ -2,18 +2,17 @@ package main
 
 import (
 	"context"
-	"errors"
 	"log"
-	"net/http"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 
 	"github.com/kokhno-nikolay/news/config"
-	"github.com/kokhno-nikolay/news/internal/handler"
 	"github.com/kokhno-nikolay/news/internal/repository"
 	"github.com/kokhno-nikolay/news/internal/repository/postgresql"
 	"github.com/kokhno-nikolay/news/internal/server"
+	"github.com/kokhno-nikolay/news/internal/service"
 )
 
 const (
@@ -24,7 +23,7 @@ const (
 
 //  @title          News service
 //  @version        1.0
-//  @description    Test task for Promova
+//  @description    Test task
 
 // @host            localhost:8000
 // @BasePath        /
@@ -41,20 +40,29 @@ func main() {
 	}
 
 	repos := repository.NewRepository(db)
-	handlers := handler.NewHandler(repos)
+	services := service.NewService(repos)
+	server := server.NewServer(services.PostService)
 
-	srv := server.NewServer(cfg, handlers.InitRoutes())
+	wg := &sync.WaitGroup{}
+	wg.Add(2)
+
+	// starting grpc server
 	go func() {
-		if err := srv.Run(); !errors.Is(err, http.ErrServerClosed) {
-			log.Printf("error occurred while running http server: %s\n", err.Error())
+		defer wg.Done()
+
+		if err := server.StartGrpcServer(cfg); err != nil {
+			log.Fatal(err)
 		}
 	}()
-	log.Printf("Server started")
 
-	<-quit
+	// starting http server
+	go func() {
+		defer wg.Done()
 
-	if err := srv.Stop(ctx); err != nil {
-		log.Printf("failed to stop server: %v", err.Error())
-	}
+		if err := server.StartHttpServer(ctx, cfg); err != nil {
+			log.Fatal(err)
+		}
+	}()
 
+	wg.Wait()
 }

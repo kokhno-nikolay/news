@@ -14,9 +14,9 @@ var (
 )
 
 type Config struct {
-	ServerHost string `env:"SERVER_HOST" envDefault:"localhost"`
-	ServerPort string `env:"SERVER_PORT" envDefault:"8000"`
-	PostresDNS string `env:"POSTGRES_DNS"`
+	GrpcAddress string `env:"SERVER_PORT" envDefault:"localhost:50051"`
+	HttpAddress string `env:"HTTP_ADDRESS" envDefault:"localhost:8000"`
+	PostresDNS  string `env:"POSTGRES_DNS"`
 }
 
 func (c *Config) String() string {

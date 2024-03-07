@@ -5,6 +5,16 @@ help: ## List all available targets with help
 build: ## Build project
   GOOS=linux CGO_ENABLED=0 go build -o=server ./cmd/server/main.go
 
+grpc: ## Generate proto files
+	protoc --proto_path api/proto --proto_path vendor.protogen \
+	--go_out=api/proto --go_opt=paths=source_relative \
+	--plugin=protoc-gen-go=bin/protoc-gen-go \
+	--go-grpc_out=api/proto --go-grpc_opt=paths=source_relative \
+	--plugin=protoc-gen-go-grpc=bin/protoc-gen-go-grpc \
+	--grpc-gateway_out=api/proto --grpc-gateway_opt=paths=source_relative \
+	--plugin=protoc-gen-grpc-gateway=bin/protoc-gen-grpc-gateway \
+  api/proto/posts.proto
+
 mock: ## Generate mocks
   go generate ./...
 
